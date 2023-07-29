@@ -1,10 +1,10 @@
-package io.jcurtis.slimslime.entities
+package io.jcurtis.platformer.entities
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
-import io.jcurtis.slimslime.managers.CollisionManager
-import io.jcurtis.slimslime.utils.BoundingBox
-import io.jcurtis.slimslime.utils.Direction
+import io.jcurtis.platformer.managers.CollisionManager
+import io.jcurtis.platformer.utils.BoundingBox
+import io.jcurtis.platformer.utils.Direction
 import kotlin.math.roundToInt
 
 abstract class Entity(x: Float, y: Float) {

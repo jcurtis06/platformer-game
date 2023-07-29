@@ -1,4 +1,4 @@
-package io.jcurtis.slimslime.utils
+package io.jcurtis.platformer.utils
 
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2

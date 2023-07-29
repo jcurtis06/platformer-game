@@ -1,4 +1,4 @@
-package io.jcurtis.slimslime
+package io.jcurtis.platformer
 
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
@@ -12,15 +12,14 @@ import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
-import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.ScreenUtils
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
-import io.jcurtis.slimslime.entities.Player
-import io.jcurtis.slimslime.managers.CollisionManager
-import io.jcurtis.slimslime.managers.EntityManager
-import io.jcurtis.slimslime.utils.BoundingBox
+import io.jcurtis.platformer.entities.Player
+import io.jcurtis.platformer.managers.CollisionManager
+import io.jcurtis.platformer.managers.EntityManager
+import io.jcurtis.platformer.utils.BoundingBox
 import kotlin.math.roundToInt
 
 object MainGame : ApplicationAdapter() {
@@ -98,7 +97,7 @@ object MainGame : ApplicationAdapter() {
             EntityManager.render(batch!!)
         }
 
-        var lerp = 0.1f
+        val lerp = 0.1f
 
         val targetPosition = Vector3(
             player!!.position.x.roundToInt().toFloat(),

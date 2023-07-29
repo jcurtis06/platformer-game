@@ -1,4 +1,4 @@
-package io.jcurtis.slimslime.entities
+package io.jcurtis.platformer.entities
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys
@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
-import io.jcurtis.slimslime.MainGame
-import io.jcurtis.slimslime.utils.Direction
+import io.jcurtis.platformer.MainGame
+import io.jcurtis.platformer.utils.Direction
 import kotlin.math.roundToInt
 
 class Player: Entity(144f, 160f) {

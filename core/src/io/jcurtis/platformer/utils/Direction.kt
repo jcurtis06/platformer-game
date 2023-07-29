@@ -1,4 +1,4 @@
-package io.jcurtis.slimslime.utils
+package io.jcurtis.platformer.utils
 
 enum class Direction {
     UP, DOWN, LEFT, RIGHT

@@ -1,7 +1,6 @@
-package io.jcurtis.slimslime.managers
+package io.jcurtis.platformer.managers
 
-import com.badlogic.gdx.math.Rectangle
-import io.jcurtis.slimslime.utils.BoundingBox
+import io.jcurtis.platformer.utils.BoundingBox
 
 object CollisionManager {
     private val colliders = arrayListOf<BoundingBox>()

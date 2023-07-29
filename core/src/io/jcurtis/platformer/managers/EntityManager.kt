@@ -1,7 +1,7 @@
-package io.jcurtis.slimslime.managers
+package io.jcurtis.platformer.managers
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import io.jcurtis.slimslime.entities.Entity
+import io.jcurtis.platformer.entities.Entity
 
 object EntityManager {
     private val entities = arrayListOf<Entity>()
