@@ -7,7 +7,7 @@ A simple platformer made in libGDX.
 3. Right click on desktop > src > io.jcurtis.platformer > DesktopLauncher.java
 4. Click Run 'DesktopLauncher.main()'
 <br>
-_On Mac, you may have to edit the run configuration and add -XstartOnFirstThread to the VM options_
+On Mac, you may have to edit the run configuration and add -XstartOnFirstThread to the VM options
 
 ### How to play
 Use wasd to move and space to jump.
