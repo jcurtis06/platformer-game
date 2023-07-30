@@ -9,6 +9,8 @@ import com.badlogic.gdx.math.Vector2
 import io.jcurtis.platformer.MainGame
 import io.jcurtis.platformer.graphics.AnimatedSheet
 import io.jcurtis.platformer.graphics.SpriteSheet
+import io.jcurtis.platformer.managers.InputAction
+import io.jcurtis.platformer.managers.InputManager
 import io.jcurtis.platformer.utils.Direction
 import kotlin.math.roundToInt
 
@@ -31,26 +33,7 @@ class Player: Entity(144f, 160f) {
         animatedSheet.currentAnimation = idleAnimation
     }
 
-    fun upJustPressed() : Boolean {
-        return Gdx.input.isKeyJustPressed(Keys.W) || Gdx.input.isKeyJustPressed(Keys.UP)
-    }
-
-    fun downJustPressed() : Boolean {
-        return Gdx.input.isKeyJustPressed(Keys.Z) || Gdx.input.isKeyJustPressed(Keys.DOWN)
-    }
-
-    fun rightPressed() : Boolean {
-        return Gdx.input.isKeyPressed(Keys.D) || Gdx.input.isKeyPressed(Keys.RIGHT)
-    }
-
-    fun leftPressed() : Boolean {
-        return Gdx.input.isKeyPressed(Keys.A) || Gdx.input.isKeyPressed(Keys.LEFT)
-    }
-
-
     override fun update(delta: Float) {
-        if(position.y < -50)
-            return
         animatedSheet.update(delta)
 
         velocity.y += gravity * delta
@@ -62,11 +45,11 @@ class Player: Entity(144f, 160f) {
         if (collidedDirections[Direction.LEFT]!! || collidedDirections[Direction.RIGHT]!!)
             velocity.x = 0f
 
-        if (leftPressed()) {
+        if (InputManager.isActionPressed(InputAction.LEFT)) {
             animatedSheet.flipH = true
             velocity.x = -speed
             animatedSheet.currentAnimation = walkAnimation
-        } else if (rightPressed()) {
+        } else if (InputManager.isActionPressed(InputAction.RIGHT)) {
             animatedSheet.flipH = false
             velocity.x = speed
             animatedSheet.currentAnimation = walkAnimation
@@ -75,7 +58,7 @@ class Player: Entity(144f, 160f) {
             animatedSheet.currentAnimation = idleAnimation
         }
 
-        if (upJustPressed() && jumps > 0) {
+        if (InputManager.isActionJustPressed(InputAction.JUMP) && jumps > 0) {
             velocity.y = jumpSpeed
             jumps--
         }
@@ -84,8 +67,6 @@ class Player: Entity(144f, 160f) {
         checkCollisionsX(velocity.x > 0)
         position.y += (velocity.y * delta).roundToInt()
         checkCollisionsY(velocity.y > 0)
-        if(velocity.x != 0.0f)
-            println( "x: ${position.x}, y: ${position.y}, delta: ${delta}, speed: ${speed}, vx: ${velocity.x}, vy: ${velocity.y}")
     }
 
     override fun render(batch: SpriteBatch) {
