@@ -15,6 +15,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
+import io.jcurtis.platformer.entities.Enemy
 import io.jcurtis.platformer.entities.Player
 import io.jcurtis.platformer.graphics.SmoothedCamera
 import io.jcurtis.platformer.managers.CollisionManager
@@ -48,6 +49,7 @@ object MainGame : ApplicationAdapter() {
     private var mapRenderer: OrthogonalTiledMapRenderer? = null
 
     private var player: Player? = null
+    private var enemy: Enemy? = null
 
     override fun create() {
         batch = SpriteBatch()
@@ -74,8 +76,11 @@ object MainGame : ApplicationAdapter() {
         assetManager!!.finishLoading()
 
         // Create the player
-        player = Player()
+        player = Player(144f, 160f)
         EntityManager.add(player!!)
+
+        enemy = Enemy( 100, 353f, 176f)
+        EntityManager.add(enemy!!)
 
         // Load the map
         map = assetManager!!.get("maps/test.tmx", TiledMap::class.java)
