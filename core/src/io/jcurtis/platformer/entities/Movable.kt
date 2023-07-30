@@ -91,10 +91,7 @@ open class Movable(x: Float, y: Float): Entity(x, y) {
             jumps--
         }
 
-        // position.x += (velocity.x * delta).roundToInt()
-        checkCollisionsX(velocity.x > 0, position.x + (velocity.x * delta).roundToInt().toFloat())
-        // position.y += (velocity.y * delta).roundToInt()
-        checkCollisionsY(velocity.y > 0, position.y + (velocity.y * delta).roundToInt().toFloat())
+        checkCollisions(position.x + (velocity.x * delta).roundToInt().toFloat(), position.y + (velocity.y * delta).roundToInt().toFloat())
     }
 
     override fun render(batch: SpriteBatch) {

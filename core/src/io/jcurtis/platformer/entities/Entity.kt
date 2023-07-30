@@ -6,6 +6,7 @@ import io.jcurtis.platformer.managers.CollisionManager
 import io.jcurtis.platformer.utils.BoundingBox
 import io.jcurtis.platformer.utils.Direction
 import kotlin.math.roundToInt
+import kotlin.math.abs
 
 abstract class Entity(x: Float, y: Float) {
     private var bounds: BoundingBox? = null
@@ -52,44 +53,64 @@ abstract class Entity(x: Float, y: Float) {
 
     }
 
-    fun checkCollisionsX(right: Boolean, newX: Float) {
-        val oldX = position.x
+    fun checkCollisions(newX: Float, newY: Float) {
+        val minStep = 16.0f
+        val xDelta = newX - position.x
+        val yDelta = newY - position.y
+        var steps = 1
+        if(abs(xDelta) > abs(yDelta)) {
+            if(abs(xDelta) > minStep)
+                steps = (abs(xDelta) / minStep).roundToInt()
+        }
+        else {
+            if(abs(yDelta) > minStep)
+                steps = (abs(xDelta) / minStep).roundToInt()
+        }
+        var xStep = xDelta / steps.toFloat()
+        var yStep = yDelta / steps.toFloat()
+        var bounds = getBounds()!!
+
+        for(i in 0 until steps) {
+            position.x += xStep
+            bounds = getBounds()!!
+
+            for (box in CollisionManager.getColliders()) {
+                if (box == bounds) continue
+                if (box.overlaps(bounds)) {
+                    if (xStep > 0) {
+                        position.x = box.left - bounds.width
+                        rightCollision()
+                    } else {
+                        position.x = box.right
+                        leftCollision()
+                    }
+                    return
+                }
+            }
+
+            position.y += yStep
+            bounds = getBounds()!!
+
+            for (box in CollisionManager.getColliders()) {
+                if (box == bounds) continue
+                if (box.overlaps(bounds)) {
+                    if (yStep > 0) {
+                        println("up")
+                        position.y = box.bottom - bounds.height
+                        upCollision()
+                    } else {
+                        println("down")
+                        position.y = box.top
+                        bounds = getBounds()!!
+                        downCollision()
+                    }
+                    return
+                }
+            }
+        }
         position.x = newX
-
-        val bounds = getBounds()!!
-
-        for (box in CollisionManager.getColliders()) {
-            if (box == getBounds()) continue
-            if (box.overlaps(getBounds())) {
-                position.x = oldX
-                if (right) {
-                    rightCollision()
-                } else {
-                    leftCollision()
-                }
-                break
-            }
-        }
-    }
-
-    fun checkCollisionsY(up: Boolean, newY: Float) {
-        val oldY = position.y
         position.y = newY
-        collidedDirections[Direction.UP] = false
-        collidedDirections[Direction.DOWN] = false
-        val bounds = getBounds()!!
-
-        for (box in CollisionManager.getColliders()) {
-            if (box == getBounds()) continue
-            if (box.overlaps(getBounds())) {
-                position.y = oldY
-                if (up) {
-                    upCollision()
-                } else {
-                    downCollision()
-                }
-            }
-        }
+        bounds = getBounds()!!
     }
 
     var position: Vector2 = Vector2(x, y)
