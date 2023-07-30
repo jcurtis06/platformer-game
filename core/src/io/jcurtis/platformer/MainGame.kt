@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.maps.tiled.TiledMap
@@ -28,35 +27,30 @@ object MainGame : ApplicationAdapter() {
     const val VIRTUAL_WIDTH = 320
     const val VIRTUAL_HEIGHT = 180
 
-    var batch: SpriteBatch? = null
-
-    // The texture and sprite used to render the player
-    var img: Texture? = null
-    var sprite: Sprite? = null
+    private var batch: SpriteBatch? = null
 
     // The FrameBuffer used to scale the game to the screen
-    var frameBuffer: FrameBuffer? = null
+    private var frameBuffer: FrameBuffer? = null
 
     // The camera used to render the scene. Do NOT move this camera around.
     // It will always look at (VIRTUAL_WIDTH/2, VIRTUAL_HEIGHT/2) and have the same size as the virtual screen
-    var fboCamera: OrthographicCamera? = null
+    private var fboCamera: OrthographicCamera? = null
 
     // the camera used within the game
-    var camera: SmoothedCamera? = null
+    private var camera: SmoothedCamera? = null
 
     // The viewport used to scale the game to the screen
-    var viewport: Viewport? = null
+    private var viewport: Viewport? = null
 
     var assetManager: AssetManager? = null
 
-    var map: TiledMap? = null
-    var mapRenderer: OrthogonalTiledMapRenderer? = null
+    private var map: TiledMap? = null
+    private var mapRenderer: OrthogonalTiledMapRenderer? = null
 
-    var player: Player? = null
+    private var player: Player? = null
 
     override fun create() {
         batch = SpriteBatch()
-        img = Texture("slime.png")
 
         // Create both cameras
         fboCamera = OrthographicCamera()
@@ -96,6 +90,11 @@ object MainGame : ApplicationAdapter() {
                 val cell = layer.getCell(x, y)
 
                 if (cell != null) {
+                    val collidable = cell.tile.properties.get("collidable", Boolean::class.java)
+
+                    if (collidable == null || !collidable)
+                        continue
+
                     val rect = BoundingBox(x*16f, y*16f, 16f, 16f)
                     CollisionManager.add(rect)
                     println("Added collision at ${x*16f}, ${y*16f}")
@@ -112,7 +111,7 @@ object MainGame : ApplicationAdapter() {
         camera!!.setTarget(player!!.position.x.toInt(), player!!.position.y.toInt())
 
         // Update the camera
-        camera!!.update(Gdx.graphics.deltaTime)
+        camera!!.update()
 
         mapRenderer!!.setView(camera)
 
@@ -172,7 +171,6 @@ object MainGame : ApplicationAdapter() {
 
     override fun dispose() {
         batch!!.dispose()
-        img!!.dispose()
         frameBuffer!!.dispose()
     }
 }

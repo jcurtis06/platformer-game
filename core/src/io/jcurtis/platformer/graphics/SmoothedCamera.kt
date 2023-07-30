@@ -11,9 +11,9 @@ class SmoothedCamera: OrthographicCamera() {
         targetY = y
     }
 
-    fun update(delta: Float) {
+    override fun update() {
         position.x += (targetX - position.x) / 10
         position.y += (targetY - position.y) / 10
-        update()
+        super.update()
     }
 }
