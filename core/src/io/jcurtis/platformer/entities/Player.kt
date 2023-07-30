@@ -31,7 +31,26 @@ class Player: Entity(144f, 160f) {
         animatedSheet.currentAnimation = idleAnimation
     }
 
+    fun upJustPressed() : Boolean {
+        return Gdx.input.isKeyJustPressed(Keys.W) || Gdx.input.isKeyJustPressed(Keys.UP)
+    }
+
+    fun downJustPressed() : Boolean {
+        return Gdx.input.isKeyJustPressed(Keys.Z) || Gdx.input.isKeyJustPressed(Keys.DOWN)
+    }
+
+    fun rightPressed() : Boolean {
+        return Gdx.input.isKeyPressed(Keys.D) || Gdx.input.isKeyPressed(Keys.RIGHT)
+    }
+
+    fun leftPressed() : Boolean {
+        return Gdx.input.isKeyPressed(Keys.A) || Gdx.input.isKeyPressed(Keys.LEFT)
+    }
+
+
     override fun update(delta: Float) {
+        if(position.y < -50)
+            return
         animatedSheet.update(delta)
 
         velocity.y += gravity * delta
@@ -43,11 +62,11 @@ class Player: Entity(144f, 160f) {
         if (collidedDirections[Direction.LEFT]!! || collidedDirections[Direction.RIGHT]!!)
             velocity.x = 0f
 
-        if (Gdx.input.isKeyPressed(Keys.A)) {
+        if (leftPressed()) {
             animatedSheet.flipH = true
             velocity.x = -speed
             animatedSheet.currentAnimation = walkAnimation
-        } else if (Gdx.input.isKeyPressed(Keys.D)) {
+        } else if (rightPressed()) {
             animatedSheet.flipH = false
             velocity.x = speed
             animatedSheet.currentAnimation = walkAnimation
@@ -56,7 +75,7 @@ class Player: Entity(144f, 160f) {
             animatedSheet.currentAnimation = idleAnimation
         }
 
-        if (Gdx.input.isKeyJustPressed(Keys.W) && jumps > 0) {
+        if (upJustPressed() && jumps > 0) {
             velocity.y = jumpSpeed
             jumps--
         }
@@ -65,6 +84,8 @@ class Player: Entity(144f, 160f) {
         checkCollisionsX(velocity.x > 0)
         position.y += (velocity.y * delta).roundToInt()
         checkCollisionsY(velocity.y > 0)
+        if(velocity.x != 0.0f)
+            println( "x: ${position.x}, y: ${position.y}, delta: ${delta}, speed: ${speed}, vx: ${velocity.x}, vy: ${velocity.y}")
     }
 
     override fun render(batch: SpriteBatch) {
