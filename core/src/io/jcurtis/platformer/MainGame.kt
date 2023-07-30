@@ -17,6 +17,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import io.jcurtis.platformer.entities.Player
+import io.jcurtis.platformer.graphics.SmoothedCamera
 import io.jcurtis.platformer.managers.CollisionManager
 import io.jcurtis.platformer.managers.EntityManager
 import io.jcurtis.platformer.utils.BoundingBox
@@ -41,7 +42,7 @@ object MainGame : ApplicationAdapter() {
     var fboCamera: OrthographicCamera? = null
 
     // the camera used within the game
-    var camera: OrthographicCamera? = null
+    var camera: SmoothedCamera? = null
 
     // The viewport used to scale the game to the screen
     var viewport: Viewport? = null
@@ -59,7 +60,7 @@ object MainGame : ApplicationAdapter() {
 
         // Create both cameras
         fboCamera = OrthographicCamera()
-        camera = OrthographicCamera()
+        camera = SmoothedCamera()
         camera!!.setToOrtho(false, VIRTUAL_WIDTH.toFloat(), VIRTUAL_HEIGHT.toFloat())
 
         // Create the viewport
@@ -108,11 +109,11 @@ object MainGame : ApplicationAdapter() {
         EntityManager.update(Gdx.graphics.deltaTime)
 
         // Move the camera to the player
-        camera!!.position.x = player!!.position.x + 16 / 2
-        camera!!.position.y = player!!.position.y + 16 / 2
+        camera!!.setTarget(player!!.position.x.toInt(), player!!.position.y.toInt())
 
-        // Always update the camera after changing its position
-        camera!!.update()
+        // Update the camera
+        camera!!.update(Gdx.graphics.deltaTime)
+
         mapRenderer!!.setView(camera)
 
         // Start rendering to the FrameBuffer
