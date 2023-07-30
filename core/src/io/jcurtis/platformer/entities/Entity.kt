@@ -36,26 +36,45 @@ abstract class Entity(x: Float, y: Float) {
         return null
     }
 
-    fun checkCollisionsX(right: Boolean) {
-        collidedDirections[Direction.RIGHT] = false
-        collidedDirections[Direction.LEFT] = false
+    open fun leftCollision() {
+
+    }
+
+    open fun rightCollision() {
+
+    }
+
+    open fun upCollision() {
+
+    }
+
+    open fun downCollision() {
+
+    }
+
+    fun checkCollisionsX(right: Boolean, newX: Float) {
+        val oldX = position.x
+        position.x = newX
+
         val bounds = getBounds()!!
 
         for (box in CollisionManager.getColliders()) {
             if (box == getBounds()) continue
             if (box.overlaps(getBounds())) {
+                position.x = oldX
                 if (right) {
-                    collidedDirections[Direction.RIGHT] = true
-                    position.x = box.left - bounds.width
+                    rightCollision()
                 } else {
-                    collidedDirections[Direction.LEFT] = true
-                    position.x = box.right
+                    leftCollision()
                 }
+                break
             }
         }
     }
 
-    fun checkCollisionsY(up: Boolean) {
+    fun checkCollisionsY(up: Boolean, newY: Float) {
+        val oldY = position.y
+        position.y = newY
         collidedDirections[Direction.UP] = false
         collidedDirections[Direction.DOWN] = false
         val bounds = getBounds()!!
@@ -63,12 +82,11 @@ abstract class Entity(x: Float, y: Float) {
         for (box in CollisionManager.getColliders()) {
             if (box == getBounds()) continue
             if (box.overlaps(getBounds())) {
+                position.y = oldY
                 if (up) {
-                    collidedDirections[Direction.UP] = true
-                    position.y = box.bottom - bounds.height
+                    upCollision()
                 } else {
-                    collidedDirections[Direction.DOWN] = true
-                    position.y = box.top
+                    downCollision()
                 }
             }
         }
