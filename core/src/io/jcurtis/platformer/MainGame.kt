@@ -69,7 +69,7 @@ object MainGame : ApplicationAdapter() {
         assetManager = AssetManager()
         assetManager!!.setLoader(TiledMap::class.java, TmxMapLoader())
 
-        assetManager!!.load("slime.png", Texture::class.java)
+        assetManager!!.load("player.png", Texture::class.java)
         assetManager!!.load("maps/test.tmx", TiledMap::class.java)
         assetManager!!.finishLoading()
 

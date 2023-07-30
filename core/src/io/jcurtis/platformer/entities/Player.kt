@@ -7,24 +7,33 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import io.jcurtis.platformer.MainGame
+import io.jcurtis.platformer.graphics.AnimatedSheet
+import io.jcurtis.platformer.graphics.SpriteSheet
 import io.jcurtis.platformer.utils.Direction
 import kotlin.math.roundToInt
 
 class Player: Entity(144f, 160f) {
-    private val sprite = Sprite(MainGame.assetManager!!.get("slime.png", Texture::class.java))
+    private val texture = MainGame.assetManager!!.get("player.png", Texture::class.java)
+
+    private val idleAnimation = SpriteSheet(texture, 7, 1, 0.1f, 0, 0, 4, 1)
+    private val walkAnimation = SpriteSheet(texture, 7, 1, 0.1f, 4, 0, 7, 1)
+    private val animatedSheet = AnimatedSheet()
 
     private var velocity = Vector2(0f, 0f)
     private val speed = 100f
     private val gravity = -300f
     private val jumpSpeed = 100f
-    private val friction = 0f
     private var jumps = 2
 
     init {
         registerBounds(14f, 12f)
+
+        animatedSheet.currentAnimation = idleAnimation
     }
 
     override fun update(delta: Float) {
+        animatedSheet.update(delta)
+
         velocity.y += gravity * delta
 
         if (collidedDirections[Direction.DOWN]!! || collidedDirections[Direction.UP]!!)
@@ -35,11 +44,16 @@ class Player: Entity(144f, 160f) {
             velocity.x = 0f
 
         if (Gdx.input.isKeyPressed(Keys.A)) {
+            animatedSheet.flipH = true
             velocity.x = -speed
+            animatedSheet.currentAnimation = walkAnimation
         } else if (Gdx.input.isKeyPressed(Keys.D)) {
+            animatedSheet.flipH = false
             velocity.x = speed
+            animatedSheet.currentAnimation = walkAnimation
         } else {
-            velocity.x *= friction
+            velocity.x = 0f
+            animatedSheet.currentAnimation = idleAnimation
         }
 
         if (Gdx.input.isKeyJustPressed(Keys.W) && jumps > 0) {
@@ -54,7 +68,12 @@ class Player: Entity(144f, 160f) {
     }
 
     override fun render(batch: SpriteBatch) {
-        sprite.setPosition(position.x, position.y)
-        sprite.draw(batch)
+        batch.draw(
+            animatedSheet.getCurrentFrame(),
+            position.x,
+            position.y,
+            animatedSheet.getCurrentFrame().regionWidth.toFloat(),
+            animatedSheet.getCurrentFrame().regionHeight.toFloat()
+        )
     }
 }
