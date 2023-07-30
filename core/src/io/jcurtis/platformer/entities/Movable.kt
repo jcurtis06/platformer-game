@@ -6,10 +6,11 @@ import com.badlogic.gdx.math.Vector2
 import io.jcurtis.platformer.MainGame
 import io.jcurtis.platformer.graphics.AnimatedSheet
 import io.jcurtis.platformer.graphics.SpriteSheet
+import io.jcurtis.platformer.utils.BoundingBox
 import io.jcurtis.platformer.utils.Direction
 import kotlin.math.roundToInt
 
-open class Movable(x: Float, y: Float): Entity(x, y) {
+open class Movable(x: Float, y: Float, width: Float, height: Float): Entity(x, y, width, height) {
     private val texture = MainGame.assetManager!!.get("player.png", Texture::class.java)
 
     private val idleAnimation = SpriteSheet(texture, 7, 1, 0.1f, 0, 0, 4, 1)
@@ -25,8 +26,6 @@ open class Movable(x: Float, y: Float): Entity(x, y) {
 
     private var currentTime = 0.0f
     init {
-        registerBounds(14f, 12f)
-
         animatedSheet.currentAnimation = idleAnimation
     }
 
@@ -45,21 +44,21 @@ open class Movable(x: Float, y: Float): Entity(x, y) {
     open fun showPosition() {
     }
 
-    override fun upCollision() {
+    override fun upCollision(box: BoundingBox) {
         velocity.y = 0f
 
     }
 
-    override fun downCollision() {
+    override fun downCollision(box: BoundingBox) {
         velocity.y = 0f
         jumps = maxJumps
     }
 
-    override fun leftCollision() {
+    override fun leftCollision(box: BoundingBox) {
         velocity.x = 0f
     }
 
-    override fun rightCollision() {
+    override fun rightCollision(box: BoundingBox) {
         velocity.x = 0f
     }
 
@@ -91,14 +90,14 @@ open class Movable(x: Float, y: Float): Entity(x, y) {
             jumps--
         }
 
-        checkCollisions(position.x + (velocity.x * delta).roundToInt().toFloat(), position.y + (velocity.y * delta).roundToInt().toFloat())
+        checkCollisions(x + (velocity.x * delta).roundToInt().toFloat(), y + (velocity.y * delta).roundToInt().toFloat())
     }
 
     override fun render(batch: SpriteBatch) {
         batch.draw(
             animatedSheet.getCurrentFrame(),
-            position.x,
-            position.y,
+            x,
+            y,
             animatedSheet.getCurrentFrame().regionWidth.toFloat(),
             animatedSheet.getCurrentFrame().regionHeight.toFloat()
         )

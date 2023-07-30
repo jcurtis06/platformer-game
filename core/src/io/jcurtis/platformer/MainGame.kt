@@ -76,12 +76,13 @@ object MainGame : ApplicationAdapter() {
         assetManager!!.finishLoading()
 
         // Create the player
-        player = Player(144f, 160f)
+        player = Player(144f, 160f, 14f, 12f)
         EntityManager.add(player!!)
+        CollisionManager.add(player!!)
 
-        enemy = Enemy( 100, 353f, 176f)
+        enemy = Enemy( 100, 353f, 176f, 14f, 12f)
         EntityManager.add(enemy!!)
-
+        CollisionManager.add(enemy!!)
         // Load the map
         map = assetManager!!.get("maps/test.tmx", TiledMap::class.java)
         mapRenderer = OrthogonalTiledMapRenderer(map, 1f)
@@ -113,7 +114,7 @@ object MainGame : ApplicationAdapter() {
         EntityManager.update(Gdx.graphics.deltaTime)
 
         // Move the camera to the player
-        camera!!.setTarget(player!!.position.x.toInt(), player!!.position.y.toInt())
+        camera!!.setTarget(player!!.x.toInt(), player!!.y.toInt())
 
         // Update the camera
         camera!!.update()

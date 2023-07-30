@@ -8,9 +8,7 @@ import io.jcurtis.platformer.utils.Direction
 import kotlin.math.roundToInt
 import kotlin.math.abs
 
-abstract class Entity(x: Float, y: Float) {
-    private var bounds: BoundingBox? = null
-
+abstract class Entity(x: Float, y: Float, width: Float, height: Float) : BoundingBox(x, y, width, height) {
     protected var collidedDirections = hashMapOf<Direction,Boolean>(
         Direction.UP to false,
         Direction.DOWN to false,
@@ -18,45 +16,26 @@ abstract class Entity(x: Float, y: Float) {
         Direction.RIGHT to false
     )
 
-    fun registerBounds(width: Float, height: Float) {
-        bounds = BoundingBox(position.x, position.y, width, height)
-        CollisionManager.add(bounds!!)
-    }
-
-    fun getBounds(): BoundingBox? {
-        bounds?.setPosition(position.x, position.y)
-        return bounds
-    }
-
-    fun getOverlapping(): BoundingBox? {
-        for (collider in CollisionManager.getColliders()) {
-            if (collider == getBounds()) continue
-            if (collider.overlaps(getBounds())) return collider
-        }
-
-        return null
-    }
-
-    open fun leftCollision() {
+    open fun leftCollision(box: BoundingBox) {
 
     }
 
-    open fun rightCollision() {
+    open fun rightCollision(box: BoundingBox) {
 
     }
 
-    open fun upCollision() {
+    open fun upCollision(box: BoundingBox) {
 
     }
 
-    open fun downCollision() {
+    open fun downCollision(box: BoundingBox) {
 
     }
 
     fun checkCollisions(newX: Float, newY: Float) {
         val minStep = 16.0f
-        val xDelta = newX - position.x
-        val yDelta = newY - position.y
+        val xDelta = newX - x
+        val yDelta = newY - y
         var steps = 1
         if(abs(xDelta) > abs(yDelta)) {
             if(abs(xDelta) > minStep)
@@ -68,55 +47,52 @@ abstract class Entity(x: Float, y: Float) {
         }
         var xStep = xDelta / steps.toFloat()
         var yStep = yDelta / steps.toFloat()
-        var bounds = getBounds()!!
 
         for(i in 0 until steps) {
-            position.x += xStep
-            bounds = getBounds()!!
+            setX(x + xStep)
+            set(this)
 
             for (box in CollisionManager.getColliders()) {
-                if (box == bounds) continue
-                if (box.overlaps(bounds)) {
+                if (box == this) continue
+                if (box.overlaps(this)) {
                     if (xStep > 0) {
-                        position.x = box.left - bounds.width
-                        rightCollision()
+                        setX(box.left - this.width)
+                        set(this)
+                        rightCollision(box)
                     } else {
-                        position.x = box.right
-                        leftCollision()
+                        setX(box.right)
+                        set(this)
+                        leftCollision(box)
                     }
                     return
                 }
             }
 
-            position.y += yStep
-            bounds = getBounds()!!
+            setY(y+yStep)
+            set(this)
 
             for (box in CollisionManager.getColliders()) {
-                if (box == bounds) continue
-                if (box.overlaps(bounds)) {
+                if (box == this) continue
+                if (box.overlaps(this)) {
                     if (yStep > 0) {
                         println("up")
-                        position.y = box.bottom - bounds.height
-                        upCollision()
+                        setY(box.bottom + this.height)
+                        set(this)
+                        upCollision(box)
                     } else {
                         println("down")
-                        position.y = box.top
-                        bounds = getBounds()!!
-                        downCollision()
+                        setY(box.top)
+                        set(this)
+                        downCollision(box)
                     }
                     return
                 }
             }
         }
-        position.x = newX
-        position.y = newY
-        bounds = getBounds()!!
+        setX(newX)
+        setY(newY)
+        set(this)
     }
-
-    var position: Vector2 = Vector2(x, y)
-        set(value) {
-            field = Vector2(value.x.roundToInt().toFloat(), value.y.roundToInt().toFloat())
-        }
 
     abstract fun update(delta: Float)
 

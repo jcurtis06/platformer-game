@@ -4,7 +4,7 @@ import io.jcurtis.platformer.managers.InputAction
 import io.jcurtis.platformer.managers.InputManager
 
 
-class Enemy(steps: Int, x: Float, y: Float): Movable(x, y) {
+class Enemy(steps: Int, x: Float, y: Float, width: Float, height: Float): Movable(x, y, width, height) {
     private val maxSteps = steps
     private var steps = 0
     private var direction = -1
