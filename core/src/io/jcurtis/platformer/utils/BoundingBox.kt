@@ -3,7 +3,7 @@ package io.jcurtis.platformer.utils
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 
-class BoundingBox(x: Float, y: Float, width: Float, height: Float) : Rectangle(x, y, width, height) {
+open class BoundingBox(x: Float, y: Float, width: Float, height: Float) : Rectangle(x, y, width, height) {
     var left = 0f
         get() = x
     var right = 0f

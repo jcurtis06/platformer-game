@@ -21,6 +21,8 @@ object EntityManager {
     }
 
     fun render(batch: SpriteBatch) {
+        entities.sortBy { it.zIndex }
+
         for (entity in entities) {
             entity.render(batch)
         }

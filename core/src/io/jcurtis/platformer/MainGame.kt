@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
+import com.badlogic.gdx.maps.MapLayer
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
@@ -17,9 +18,13 @@ import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import io.jcurtis.platformer.entities.Player
 import io.jcurtis.platformer.graphics.SmoothedCamera
+import io.jcurtis.platformer.graphics.SpriteSheet
+import io.jcurtis.platformer.graphics.fx.Background
+import io.jcurtis.platformer.graphics.fx.Grass
 import io.jcurtis.platformer.managers.CollisionManager
 import io.jcurtis.platformer.managers.EntityManager
 import io.jcurtis.platformer.utils.BoundingBox
+import kotlin.math.roundToInt
 
 object MainGame : ApplicationAdapter() {
     // The virtual resolution of the game in pixels
@@ -37,7 +42,7 @@ object MainGame : ApplicationAdapter() {
     private var fboCamera: OrthographicCamera? = null
 
     // the camera used within the game
-    private var camera: SmoothedCamera? = null
+    var camera: SmoothedCamera? = null
 
     // The viewport used to scale the game to the screen
     private var viewport: Viewport? = null
@@ -47,7 +52,9 @@ object MainGame : ApplicationAdapter() {
     private var map: TiledMap? = null
     private var mapRenderer: OrthogonalTiledMapRenderer? = null
 
-    private var player: Player? = null
+    var player: Player? = null
+
+    var background: Background? = null
 
     override fun create() {
         batch = SpriteBatch()
@@ -71,11 +78,17 @@ object MainGame : ApplicationAdapter() {
 
         assetManager!!.load("player.png", Texture::class.java)
         assetManager!!.load("maps/test.tmx", TiledMap::class.java)
+        assetManager!!.load("background.png", Texture::class.java)
+        assetManager!!.load("stars.png", Texture::class.java)
+        assetManager!!.load("grass/grass.png", Texture::class.java)
         assetManager!!.finishLoading()
 
         // Create the player
         player = Player()
         EntityManager.add(player!!)
+
+        // Create the background
+        background = Background(SpriteSheet(assetManager!!.get("stars.png"), 3, 3))
 
         // Load the map
         map = assetManager!!.get("maps/test.tmx", TiledMap::class.java)
@@ -101,14 +114,32 @@ object MainGame : ApplicationAdapter() {
                 }
             }
         }
+
+        // Load the grass object layer
+        val grassLayer = map!!.layers.get("grass") as MapLayer
+
+        // Loop through all the objects in the layer
+        grassLayer.objects.forEach {
+            // each object is defined as a Point in the Tiled editor
+            // get the object's position from the Point
+            val x = it.properties.get("x", Float::class.java)
+            val y = it.properties.get("y", Float::class.java)
+
+            // create a new grass entity
+            val texture = assetManager!!.get("grass/grass.png", Texture::class.java)
+
+            val grass = Grass(texture, x.roundToInt().toFloat(), y.roundToInt().toFloat())
+            EntityManager.add(grass)
+        }
     }
 
     override fun render() {
         // Update entities
+        background!!.update()
         EntityManager.update(Gdx.graphics.deltaTime)
 
         // Move the camera to the player
-        camera!!.setTarget(player!!.position.x.toInt(), player!!.position.y.toInt())
+        camera!!.setTarget(player!!.x.toInt(), player!!.y.toInt())
 
         // Update the camera
         camera!!.update()
@@ -119,7 +150,7 @@ object MainGame : ApplicationAdapter() {
         frameBuffer!!.begin()
 
         // Clear the screen with a white color
-        Gdx.gl.glClearColor(1f, 1f, 1f, 1f)
+        Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
         // Set the projection matrix to the camera's combined matrix
@@ -129,8 +160,8 @@ object MainGame : ApplicationAdapter() {
         batch!!.begin()
         // Everything in here will be rendered to the FrameBuffer
         // Thus making it pixel-perfect
-
         if (assetManager!!.update()) {
+            background!!.render(batch!!)
             EntityManager.render(batch!!)
             mapRenderer!!.render()
         }

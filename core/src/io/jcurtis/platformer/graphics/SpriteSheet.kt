@@ -3,32 +3,15 @@ package io.jcurtis.platformer.graphics
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 
-class SpriteSheet(
-    var res: Texture,
-    var cols: Int,
-    var rows: Int,
-    var duration: Float,
-    var startX: Int = 0,
-    var startY: Int = 0,
-    var endX: Int = 0,
-    var endY: Int = 0
-) {
-    fun splitAnimation(): Array<TextureRegion> {
-        val tmp = TextureRegion.split(
-            res,
-            res.width / cols,
-            res.height / rows
-        )
 
-        val frames = Array((endX - startX) * (endY - startY)) { TextureRegion() }
-        var index = 0
+class SpriteSheet(texture: Texture, spriteWidth: Int, spriteHeight: Int) {
+    private val sprites: Array<Array<TextureRegion>> = TextureRegion.split(texture, spriteWidth, spriteHeight)
 
-        for (i in startY until endY) {
-            for (j in startX until endX) {
-                frames[index++] = tmp[i][j]
-            }
-        }
+    fun getSprite(x: Int, y: Int): TextureRegion {
+        return sprites[y][x]
+    }
 
-        return frames
+    fun getSprites(): Array<Array<TextureRegion>> {
+        return sprites
     }
 }
