@@ -79,9 +79,11 @@ abstract class Entity(x: Float, y: Float) {
                 if (box.overlaps(bounds)) {
                     if (xStep > 0) {
                         position.x = box.left - bounds.width
+                        bounds = getBounds()!!
                         rightCollision()
                     } else {
                         position.x = box.right
+                        bounds = getBounds()!!
                         leftCollision()
                     }
                     return
@@ -97,6 +99,7 @@ abstract class Entity(x: Float, y: Float) {
                     if (yStep > 0) {
                         println("up")
                         position.y = box.bottom - bounds.height
+                        bounds = getBounds()!!
                         upCollision()
                     } else {
                         println("down")
